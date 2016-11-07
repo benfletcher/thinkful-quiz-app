@@ -60,7 +60,7 @@ $(document).ready(function () {
 
     }
 
-    function generate... () {
+    function generate() {
       var itemsHTML = items.map(function(item) {
         var checkedClass = item.checked ? ' shopping-item__checked' : '';
 
@@ -103,8 +103,9 @@ $(document).ready(function () {
   $('#start').click(function(){
 var next = generateNextQuestion();
   // Flush out 106
+  console.log('Hello I was clicked');
   renderQuestion(next);
-  })
+});
 
   // Attached to the parent preventing overwrite on render
   $('.shopping-list')
