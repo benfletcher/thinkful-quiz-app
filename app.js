@@ -14,7 +14,7 @@ $(document).ready(function () {
       correctAnswer: 3
     },
     {
-      question: "xxxxxxx ?", 
+      question: "xxxxxxx ?",
 
       answers: [
         "answer choice 'a'.",
@@ -34,7 +34,7 @@ $(document).ready(function () {
       currentQuestion: 1,  // starts at 1, incremented as questions answered
 
       numCorrect: 0, // calculate numIncorrect by subtracting
-    }
+    };
 
     // state modifying functions
 
@@ -65,13 +65,13 @@ $(document).ready(function () {
         var checkedClass = item.checked ? ' shopping-item__checked' : '';
 
         return (
-          '<li>' + 
-            '<span class="shopping-item' + checkedClass + '">' + 
-              item.name + '</span>' + 
-            '<div class="shopping-item-controls">' + 
+          '<li>' +
+            '<span class="shopping-item' + checkedClass + '">' +
+              item.name + '</span>' +
+            '<div class="shopping-item-controls">' +
               '<button class="shopping-item-toggle">' +
-                '<span class="button-label">check</span>' + 
-              '</button>\n' + 
+                '<span class="button-label">check</span>' +
+              '</button>\n' +
               '<button class="shopping-item-delete">' +
                 '<span class="button-label">delete</span>' +
                 '</button>' +
@@ -100,20 +100,11 @@ $(document).ready(function () {
 
 
   // Listeners
-  $('#js-question').submit(function(event) {
-    event.preventDefault();
-
-    var newItem = $('#shopping-list-entry').val();
-
-    if (newItem.length) { // ignore if blank (do checks in addItem() instead?)
-      state.addItem(newItem);
-      $('.shopping-list').html(state.generateList());
-      event.target.reset();
-    }
-  });
-
-  var getButtonItem = (event) => 
-    $(event.target).closest('li').find('.shopping-item').text();
+  $('#start').click(function(){
+var next = generateNextQuestion();
+  // Flush out 106
+  renderQuestion(next);
+  })
 
   // Attached to the parent preventing overwrite on render
   $('.shopping-list')
