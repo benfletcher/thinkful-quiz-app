@@ -4,34 +4,9 @@
 body {
   font-family: 'Roboto', sans-serif;
 }
-button, input[type="text"] {
-  padding: 5px;
-}
-button:hover {
-  cursor: pointer;
-}
-#quiz-list-item {
-  width: 250px;
-}
 .container {
   max-width: 600px;
   margin: 0 auto;
-}
-.quiz-list {
-  list-style: none;
-  padding-left: 0;
-}
-.quiz-list > li {
-  margin-bottom: 20px;
-  border: 1px solid grey;
-  padding: 20px;
-}
-.quiz-item {
-  display: block;
-  color: grey;
-  font-style: italic;
-  font-size: 20px;
-  margin-bottom: 15px;
 }
 h3 {
   font-weight: bold;
@@ -39,18 +14,24 @@ h3 {
 }
 .answers {
   line-height: 1.5;
-  margin: 0 0 15px 0;
+  margin: 0 0 20px;
+  padding: 5px;
 }
-.answers:hover, .js-clicked {
-  background-color: lightblue;
+.js-selectable:hover {
   cursor: pointer;
+}
+.js-selectable:hover, .js-clicked {
+  background-color: lightblue;
   border: 1px solid darkgrey;
+  border-radius: 8px;
 }
 #correct {
   color: green;
-  background-color: lightgrey;
 }
 #incorrect {
   color: red;
-  background-color: lightgrey;
+}
+.next-button {
+   position: relative;;
+   left: 200px;
 }

@@ -1,20 +1,19 @@
 $(document).ready(function () {
+  var page = $('#js-main');
+
   var state = (function generateState() {
     var currentQuestion = -1;  // -1: start screen, 0: first question
     var numCorrect = 0;
 
-    // state modifying functions
     function generateStartScreen() {
-      // called if user clicks on restart / start over
-      // this is the HTML hardcoded in index.html
       return (
         '<h2>Instructions</h2>\n' +
         '<p>Press start when you are ready to begin the quiz</p>\n' +
-        '<button id="start">Start Quiz</button>\n'
+        '<button class="next-button">Let\'s Go!</button>\n'
       );
     }
 
-    function generateNextQuestion() {
+    function generateQuestion() {
       var question = questions[currentQuestion].question;
       var answers = questions[currentQuestion].answers;
 
@@ -26,18 +25,20 @@ $(document).ready(function () {
       var answersHtml =
         '<ol type="a">' +
           answers.map(function (element, index) {
-            return '<li class="answers" id="js-opt-' + index + '">' +
+            return '<li class="answers js-selectable" id="js-opt-' + index + '">' +
               element + '</li>';
           }).join("\n") +
         '</ol>';
 
       var footerHtml =
         '<div id="js-footer">' +
-          '<h3>Please click on your choice above.</h3>' +
+          '<h3 id="js-click-prompt">Please click on your choice above.</h3>' +
           '<p id="js-footer">So far you have gotten ' + numCorrect +
             ' right and ' + (currentQuestion - numCorrect) + ' wrong.</p>' +
         '</div>' +
-        '<div>';
+        '<div>' +
+        '<button class="next-button" type="button">Next question</button>'
+        '</div>';
 
       return questionHtml + answersHtml + footerHtml;
     }
@@ -46,13 +47,13 @@ $(document).ready(function () {
       var correctAnswer = questions[currentQuestion].correctAnswer;
 
       if (answer === correctAnswer) {
-        return gotItRight();
+        return _gotItRight();
       } else {
-        return gotItWrong();
+        return _gotItWrong();
       }
     }
 
-    function gotItRight() {
+    function _gotItRight() {
       numCorrect += 1;
 
       return (
@@ -60,30 +61,24 @@ $(document).ready(function () {
       );
     }
 
-    function gotItWrong() {
-      // got it wrong
-      // output correct answer text and choice number:
-      // "Sorry, the correct answer was 'c. blah blah blah'"
-      var question = questions[currentQuestion];
+    function _gotItWrong() {
+      var thisQ = questions[currentQuestion];
+      var thisA = thisQ.correctAnswer;
 
       return (
         '<h3 id="incorrect">Sorry, you got it wrong. The correct answer is:</h3>' +
-        '<p id="correct">"' + question.answers[question.correctAnswer] + '"</p>'
+        '<p id="correct">"' + thisQ.answers[thisA] + '"</p>'
       );
     }
 
     function nextQuestion() {
       currentQuestion += 1;
 
-      if (currentQuestion >= questions.length) { // finished questions
-        return false; // ??? or call summarize?
-      }
-
-      return true; // indicates end not reached... better way to signal this?
+      return currentQuestion < questions.length;
     }
 
-    function resetQuiz() {
-      currentQuestion = 0;
+    function restart() {
+      currentQuestion = -1;
       numCorrect = 0;
     }
 
@@ -94,20 +89,36 @@ $(document).ready(function () {
       // balloons or fireworks for high / perfect score
       // crying face for low score
       // ...
+      return (
+        '<h2>Results</h2>' +
+        '<p>' +
+          'You answered ' + numCorrect + ' out of ' + questions.length +
+            ' questions correctly.' +
+        '</p>' +
+        '<button id="js-restart" type="button">Try again?</button>'
+      );
     }
 
     return {
       status,
       generateStartScreen,
-      generateNextQuestion,
+      generateQuestion,
       checkAnswer,
       nextQuestion,
-      resetQuiz,
+      restart,
       generateFinalResults
     };
   }());
 
-  var page = $('#js-main');
+  // var generate = (function generatePages() {
+  //   function question(currQuestion) {
+  //
+  //   }
+  //
+  //   return {
+  //
+  //   };
+  // }());
 
   function render(selector, content) {
     selector.html(content);
@@ -116,26 +127,27 @@ $(document).ready(function () {
   // initialize page
   render(page, state.generateStartScreen());
 
-  function highlightClicked(selector) {
-    selector.addClass('js-clicked');
-  }
+  $('#js-main')
+    .on('click', '.js-selectable', function(event) {
+      var selectedAnswer = Number(event.target.id.substr(-1));
 
-  // Listeners
-  $('#start').click(function () {
-    state.resetQuiz();  // do we need?
+      $(event.target).addClass('js-clicked');
+      $('.answers').removeClass('js-selectable');
+      $('#js-click-prompt').remove();
 
-    var next = state.generateNextQuestion();
+      render($('#js-footer'), state.checkAnswer(selectedAnswer));
+    })
 
-    render(page, next);
-  });
+    .on('click', '.next-button', function(event) {
+      var next = state.nextQuestion()
+        ? state.generateQuestion()
+        : state.generateFinalResults();
 
-  $('.container').on('click', '.answers', function(event) {
-    var selectedAnswer = Number(event.target.id.substr(-1));
+      render(page, next);
+    })
 
-    highlightClicked($(event.target));
-
-    render($('#js-footer'), state.checkAnswer(selectedAnswer));
-
-    state.nextQuestion();
-  })
+    .on('click', '#js-restart', function() {
+      state.restart();
+      render(page, state.generateStartScreen());
+    });
 });

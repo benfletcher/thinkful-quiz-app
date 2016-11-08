@@ -59,9 +59,8 @@ var questions = [
     answers: [
       "Web apps are easy and quick to write even for beginners.",
       "Sooo, is this all the app can do?",
-      "This website's developers are god-like.",
-      "Did you know that browsers can do, like, colors?",
-      "I've seen three-year-olds code better sites.",
+      "This website's developers are... trying hard.",
+      "So, about those CSS lessons..."
     ],
     correctAnswer: 2
   }
